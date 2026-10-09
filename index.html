@@ -70,7 +70,6 @@
   function setBusy(v) { busy = v; ["start","stop","getSignal"].forEach(id => $(id).disabled = v); }
   function setConnection(ok, text) { $("dot").className = "dot" + (ok ? " on" : ""); $("connection").textContent = text; }
   async function api(action, extra={}) {
-    if (SUPABASE_ANON_KEY === "sb_publishable_UwfPurTYDg3DKAC_IkGvCg_ZB4oseye") throw new Error("Не указан Supabase anon key в index.html. Добавь ключ в SUPABASE_ANON_KEY.");
     const response = await fetch(FUNCTION_URL, {
       method: "POST",
       headers: { "Content-Type":"application/json", "apikey":SUPABASE_ANON_KEY, "Authorization":"Bearer " + SUPABASE_ANON_KEY },
