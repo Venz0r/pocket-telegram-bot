@@ -2,225 +2,137 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pocket Trade Control</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07110d">
+  <title>Pocky Trader</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; padding: 20px;
-      background: #0b110e; color: #eaffef;
-      font: 16px Arial, sans-serif;
-    }
-    .app { max-width: 480px; margin: auto; }
-    .panel {
-      background: #151f19; border: 1px solid #294533;
-      border-radius: 16px; padding: 16px; margin: 14px 0;
-    }
-    h1 { color: #61ff99; font-size: 23px; }
-    label { display: block; margin: 14px 0 7px; color: #b9d6c3; }
-    select, input, button {
-      width: 100%; padding: 13px; border-radius: 10px;
-      font-size: 16px;
-    }
-    select, input {
-      background: #0d1711; color: white;
-      border: 1px solid #385443;
-    }
-    button { border: 0; font-weight: bold; margin-top: 10px; }
-    button:disabled { opacity: .5; }
-    #start { background: #5cff91; color: #07130a; }
-    #stop { background: #3b2428; color: #ffb5bd; }
-    .muted { color: #9ab4a2; font-size: 13px; }
-    #status { color: #5cff91; font-weight: bold; }
-    #log { font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+    :root{color-scheme:dark;--bg:#07110d;--panel:#101d17;--line:#20372a;--green:#37f59b;--muted:#9bb5a6;--red:#ff647c}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#123322 0,#07110d 52%);color:#f3fff8;font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+    main{width:min(100%,520px);margin:auto;padding:22px 16px calc(28px + env(safe-area-inset-bottom))}
+    .brand{display:flex;align-items:center;gap:12px;margin:8px 0 22px}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#47ffab,#07945b);display:grid;place-items:center;color:#062315;font-size:25px;font-weight:900;box-shadow:0 0 28px #37f59b35}
+    h1{font-size:22px;letter-spacing:.4px;margin:0}.sub{color:var(--muted);font-size:12px}.pill{margin-left:auto;border:1px solid var(--line);border-radius:99px;padding:5px 9px;font-size:11px;color:var(--muted)}
+    .card{background:linear-gradient(145deg,#12231a,#0d1812);border:1px solid var(--line);border-radius:20px;padding:17px;margin:12px 0;box-shadow:0 12px 36px #0002}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px}.label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.8px}.status{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;background:#65776c}.dot.on{background:var(--green);box-shadow:0 0 12px #37f59b}
+    .big{font-size:25px;font-weight:800;margin-top:7px}.small{font-size:13px;color:var(--muted)}
+    label{display:block;color:var(--muted);font-size:12px;margin:14px 0 7px}select,input{width:100%;background:#07110d;border:1px solid #294535;border-radius:12px;padding:13px;color:#f3fff8;font:inherit;outline:none}select:focus,input:focus{border-color:var(--green)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}button{border:0;border-radius:13px;padding:14px 12px;font:700 15px system-ui;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:linear-gradient(135deg,#47ffab,#16c879);color:#052515;box-shadow:0 6px 20px #37f59b20}.secondary{background:#1a2b21;color:#e6fff0;border:1px solid #2b4937}
+    .signal{border-radius:15px;padding:15px;background:#08130d;border:1px solid var(--line);margin-top:12px}.signal-value{font-size:25px;font-weight:900;margin-top:5px}.up{color:var(--green)}.down{color:var(--red)}.neutral{color:#f6d878}
+    .message{font-size:13px;color:var(--muted);margin-top:12px;white-space:pre-wrap;overflow-wrap:anywhere}.message.error{color:#ff9aa9}.message.ok{color:var(--green)}.foot{text-align:center;color:#678574;font-size:11px;padding:10px}
   </style>
 </head>
 <body>
-<div class="app">
-  <h1>◈ POCKET TRADE</h1>
-  <p class="muted">TELEGRAM MINI APP · DEMO</p>
+<main>
+  <header class="brand">
+    <div class="logo">↗</div>
+    <div><h1>POCKY TRADER</h1><div class="sub">Trading signals · Telegram Mini App</div></div>
+    <span class="pill">BETA</span>
+  </header>
 
-  <div class="panel">
-    <p>Режим: <b>СИМУЛЯЦИЯ</b></p>
-    <p>Статус: <span id="status">ПОДКЛЮЧЕНИЕ...</span></p>
+  <section class="card">
+    <div class="row"><div class="label">Подключение</div><div class="status"><span id="dot" class="dot"></span><span id="connection">Проверка…</span></div></div>
+    <div class="big" id="runState">Бот остановлен</div>
+    <div class="small" id="lastUpdate">Подключись, чтобы проверить состояние</div>
+  </section>
 
-    <label for="asset">Инструмент</label>
-    <select id="asset">
-      <option>EUR/USD</option>
-      <option>GBP/USD</option>
-      <option>USD/JPY</option>
-    </select>
+  <section class="card">
+    <div class="label">Параметры торговли</div>
+    <div class="grid">
+      <div><label for="instrument">Инструмент</label><select id="instrument"><option>EUR/USD</option><option>GBP/USD</option><option>USD/JPY</option><option>USD/CHF</option><option>AUD/USD</option><option>USD/CAD</option><option>BTC/USD</option></select></div>
+      <div><label for="amount">Сумма</label><input id="amount" type="number" min="1" max="1000000" step="1" value="100" inputmode="numeric"></div>
+    </div>
+    <div class="btns"><button id="start" class="primary">▶ START</button><button id="stop" class="secondary">■ STOP</button></div>
+    <div id="message" class="message">Ожидаю подключения к серверу.</div>
+  </section>
 
-    <label for="stake">Тестовая сумма ($)</label>
-    <input id="stake" type="number" min="1" max="10"
-           value="1" step="1">
-
-    <button id="start">▶ START</button>
-    <button id="stop">■ STOP</button>
-  </div>
-
-  <div class="panel">
-    <h3>Журнал</h3>
-    <div id="log">Подключаем сервер...</div>
-    <p class="muted">
-      Только симуляция. Рыночные данные не подключены.
-      Сделки брокеру не отправляются.
-    </p>
-  </div>
-</div>
-
+  <section class="card">
+    <div class="row"><div><div class="label">Последний сигнал</div><div id="signal" class="signal-value neutral">—</div></div><div class="pill" id="pairBadge">EUR/USD</div></div>
+    <div id="signalInfo" class="small">Нажми «Получить сигнал», чтобы запросить анализ рынка.</div>
+    <button id="getSignal" class="primary" style="width:100%;margin-top:16px">Получить сигнал</button>
+    <div class="message" id="signalMessage"></div>
+  </section>
+  <div class="foot">Сигналы носят информационный характер и не гарантируют прибыль.</div>
+</main>
 <script>
-  // Вставь свои значения из Supabase.
-  const SUPABASE_URL = "https://hmhzyjykxnkgcyptxnby.supabase.co/rest/v1/";
-  const SUPABASE_KEY = "sb_publishable_UwfPurTYDg3DKAC_IkGvCg_ZB4oseye";
-
-  const tg = window.Telegram?.WebApp;
-  tg?.ready();
-  tg?.expand();
-
-  const statusEl = document.getElementById("status");
-  const log = document.getElementById("log");
-  const start = document.getElementById("start");
-  const stop = document.getElementById("stop");
-  const asset = document.getElementById("asset");
-  const stakeInput = document.getElementById("stake");
-
-  let running = false;
-  let timer = null;
+(() => {
+  // Supabase → Project Settings → API: вставь публичный anon/publishable key.
+  const SUPABASE_URL = "https://hmhzyjykxnkgcyptxnby.supabase.co";
+  const SUPABASE_ANON_KEY = "PASTE_SUPABASE_ANON_KEY_HERE";
+  const FUNCTION_URL = SUPABASE_URL + "/functions/v1/bot-control";
+  const $ = id => document.getElementById(id);
+  const tg = window.Telegram && window.Telegram.WebApp;
+  if (tg) { tg.ready(); tg.expand(); }
   let busy = false;
+  const userId = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? String(tg.initDataUnsafe.user.id) : "";
+  const initData = tg ? tg.initData : "";
 
-  function write(message) {
-    const line = document.createElement("div");
-    line.textContent = new Date().toLocaleTimeString() + " — " + message;
-    log.prepend(line);
+  function message(text, type="") { $("message").textContent = text; $("message").className = "message " + type; }
+  function setBusy(v) { busy = v; ["start","stop","getSignal"].forEach(id => $(id).disabled = v); }
+  function setConnection(ok, text) { $("dot").className = "dot" + (ok ? " on" : ""); $("connection").textContent = text; }
+  async function api(action, extra={}) {
+    if (SUPABASE_ANON_KEY === "PASTE_SUPABASE_ANON_KEY_HERE") throw new Error("Не указан Supabase anon key в index.html. Добавь ключ в SUPABASE_ANON_KEY.");
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: { "Content-Type":"application/json", "apikey":SUPABASE_ANON_KEY, "Authorization":"Bearer " + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ action, telegram_user_id:userId, initData, instrument:$("instrument").value, amount:Number($("amount").value), ...extra })
+    });
+    const raw = await response.text();
+    let data; try { data = JSON.parse(raw); } catch { data = { error: raw || "Пустой ответ сервера" }; }
+    if (!response.ok) throw new Error((data && (data.error || data.message)) || ("HTTP " + response.status));
+    if (data.error) throw new Error(data.error);
+    return data;
   }
-
-  function setBusy(value) {
-    busy = value;
-    start.disabled = value;
-    stop.disabled = value;
-  }
-
-  async function serverRequest(action) {
-    if (!tg?.initData) {
-      throw new Error(
-        "Открой приложение через кнопку меню Telegram. Данные авторизации не получены."
-      );
-    }
-
-    if (!SUPABASE_URL.startsWith("https://") ||
-        SUPABASE_KEY.startsWith("ВСТАВЬ_")) {
-      throw new Error("Сначала укажи Project URL и Publishable key Supabase.");
-    }
-
-    const response = await fetch(
-      SUPABASE_URL.replace(/\/+$/, "") + "/functions/v1/bot-control",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": SUPABASE_KEY
-        },
-        body: JSON.stringify({
-          initData: tg.initData,
-          action,
-          instrument: asset.value,
-          amount: Number(stakeInput.value)
-        })
-      }
-    );
-
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok || !data.ok) {
-      throw new Error(data.error || ("Ошибка сервера: " + response.status));
-    }return data;
-  }
-
-  function showServerEvents(events) {
-    if (!Array.isArray(events)) return;
-    log.replaceChildren();
-
-    if (events.length === 0) {
-      write("Сервер подключён. Событий пока нет.");
-      return;
-    }
-
-    for (const event of events) {
-      const line = document.createElement("div");
-      const time = event.created_at
-        ? new Date(event.created_at).toLocaleTimeString()
-        : "";
-      line.textContent = time + " — " + event.message;
-      log.appendChild(line);
-    }
-  }
-
-  async function loadStatus() {
+  async function refresh() {
+    if (!userId || !initData) { setConnection(false,"Открой через Telegram"); message("Открой мини-приложение из Telegram, а не напрямую в браузере.", "error"); return; }
     try {
-      const data = await serverRequest("status");
-      showServerEvents(data.events);
-      running = Boolean(data.session?.is_running);
-      statusEl.textContent = running
-        ? "DEMO ЗАПУЩЕН (СЕРВЕР)"
-        : "ОСТАНОВЛЕН (СЕРВЕР)";
-      if (running) {
-        write("Сервер сообщает, что симуляция ранее была запущена. Таймер автоматически не возобновлён.");
-      }
-    } catch (error) {
-      statusEl.textContent = "НЕТ ПОДКЛЮЧЕНИЯ";
-      write(error.message);
+      const data = await api("status");
+      setConnection(true,"Подключено");
+      $("runState").textContent = data.is_running ? "Бот запущен" : "Бот остановлен";
+      $("lastUpdate").textContent = "Состояние сервера получено";
+      if (data.instrument) $("instrument").value = data.instrument;
+      if (data.amount != null) $("amount").value = data.amount;
+      message("Связь с сервером работает.", "ok");
+    } catch (e) {
+      setConnection(false,"Нет подключения");
+      message("Ошибка сервера: " + e.message, "error");
     }
   }
-
-  start.addEventListener("click", async () => {
-    if (busy || running) return;
-
-    const amount = Number(stakeInput.value);
-    if (!Number.isFinite(amount) || amount < 1 || amount > 10) {
-      write("Ошибка: тестовая сумма должна быть от $1 до $10.");
-      return;
-    }
-
-    setBusy(true);
-    try {
-      await serverRequest("start");
-      running = true;
-      statusEl.textContent = "DEMO ЗАПУЩЕН (СЕРВЕР)";
-      write("Сервер подтвердил START. Торговых заявок нет.");
-
-      timer = setInterval(() => {
-        if (!running) return;
-        write("Тестовый цикл: " + asset.value +
-          ". Сумма $" + amount + ". Рыночный сигнал не рассчитывается.");
-      }, 10000);
-    } catch (error) {
-      write("START не выполнен: " + error.message);
-    } finally {
-      setBusy(false);
-    }
-  });
-
-  stop.addEventListener("click", async () => {
+  async function runAction(action) {
     if (busy) return;
-
+    if (!userId || !initData) { message("Открой мини-приложение через Telegram.", "error"); return; }
+    const amount = Number($("amount").value);
+    if (!Number.isFinite(amount) || amount < 1) { message("Укажи сумму не меньше 1.", "error"); return; }
     setBusy(true);
     try {
-      await serverRequest("stop");
-      running = false;
-      clearInterval(timer);
-      timer = null;
-      statusEl.textContent = "ОСТАНОВЛЕН (СЕРВЕР)";
-      write("Сервер подтвердил STOP. Симуляция остановлена.");
-    } catch (error) {
-      write("STOP не подтверждён сервером: " + error.message);
-    } finally {
-      setBusy(false);
-    }
-  });
-
-  loadStatus();
+      const data = await api(action);
+      $("runState").textContent = data.is_running ? "Бот запущен" : "Бот остановлен";
+      setConnection(true,"Подключено");
+      message(data.message || (action === "start" ? "Бот запущен." : "Бот остановлен."), "ok");
+    } catch (e) { setConnection(false,"Ошибка запроса"); message("Не удалось выполнить действие: " + e.message, "error"); }
+    finally { setBusy(false); }
+  }
+  async function getSignal() {
+    if (busy) return;
+    if (!userId || !initData) { $("signalMessage").textContent = "Открой мини-приложение через Telegram."; return; }
+    setBusy(true); $("signalMessage").textContent = "Запрашиваю данные рынка…";
+    try {
+      const data = await api("signal");
+      const s = String(data.signal || "NO_SIGNAL").toUpperCase();
+      $("signal").textContent = s === "UP" ? "ВВЕРХ ↑" : s === "DOWN" ? "ВНИЗ ↓" : "НЕТ СИГНАЛА";
+      $("signal").className = "signal-value " + (s === "UP" ? "up" : s === "DOWN" ? "down" : "neutral");
+      $("pairBadge").textContent = $("instrument").value;
+      $("signalInfo").textContent = data.message || "Анализ завершён.";
+      $("signalMessage").textContent = data.price ? "Последняя цена: " + data.price : "";
+      setConnection(true,"Подключено");
+    } catch (e) { $("signalMessage").textContent = "Ошибка: " + e.message; setConnection(false,"Ошибка запроса"); }
+    finally { setBusy(false); }
+  }
+  $("start").addEventListener("click", () => runAction("start"));
+  $("stop").addEventListener("click", () => runAction("stop"));
+  $("getSignal").addEventListener("click", getSignal);
+  $("instrument").addEventListener("change", () => $("pairBadge").textContent = $("instrument").value);
+  refresh();
+})();
 </script>
 </body>
 </html>
