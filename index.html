@@ -57,7 +57,7 @@
 (() => {
   // Supabase → Project Settings → API: вставь публичный anon/publishable key.
   const SUPABASE_URL = "https://hmhzyjykxnkgcyptxnby.supabase.co";
-  const SUPABASE_ANON_KEY = "PASTE_SUPABASE_ANON_KEY_HERE";
+  const SUPABASE_ANON_KEY = "sb_publishable_UwfPurTYDg3DKAC_IkGvCg_ZB4oseye";
   const FUNCTION_URL = SUPABASE_URL + "/functions/v1/bot-control";
   const $ = id => document.getElementById(id);
   const tg = window.Telegram && window.Telegram.WebApp;
@@ -70,7 +70,7 @@
   function setBusy(v) { busy = v; ["start","stop","getSignal"].forEach(id => $(id).disabled = v); }
   function setConnection(ok, text) { $("dot").className = "dot" + (ok ? " on" : ""); $("connection").textContent = text; }
   async function api(action, extra={}) {
-    if (SUPABASE_ANON_KEY === "PASTE_SUPABASE_ANON_KEY_HERE") throw new Error("Не указан Supabase anon key в index.html. Добавь ключ в SUPABASE_ANON_KEY.");
+    if (SUPABASE_ANON_KEY === "sb_publishable_UwfPurTYDg3DKAC_IkGvCg_ZB4oseye") throw new Error("Не указан Supabase anon key в index.html. Добавь ключ в SUPABASE_ANON_KEY.");
     const response = await fetch(FUNCTION_URL, {
       method: "POST",
       headers: { "Content-Type":"application/json", "apikey":SUPABASE_ANON_KEY, "Authorization":"Bearer " + SUPABASE_ANON_KEY },
